@@ -85,7 +85,8 @@ async def startup_event():
 
     
  # Usa a variável ROOT_DIR já existente para apontar para a pasta do projeto
-    memory_dir = Path("/app/memory")
+  # Usa a variável ROOT_DIR relativa à pasta do projeto
+    memory_dir = ROOT_DIR / "memory"
     memory_dir.mkdir(parents=True, exist_ok=True)
     
     with open(memory_dir / "test_credentials.md", "w") as f:
