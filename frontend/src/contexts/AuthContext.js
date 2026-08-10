@@ -20,10 +20,19 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = async () => {
+    // Se nem tiver token no localStorage, nem gasta chamada à API
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUser(false);
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data } = await api.get('/auth/me');
       setUser(data);
     } catch (error) {
+      localStorage.removeItem('token'); // Se o token for inválido/expirado, limpa
       setUser(false);
     } finally {
       setLoading(false);
@@ -32,19 +41,26 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await api.post('/auth/login', { email, password });
-    setUser(data);
-    return data;
-  };
+    
+    // ✅ CORREÇÃO: Salva o access_token no navegador!
+    if (data.access_token) {
+      localStorage.setItem('token', data.access_token);
+    }
 
-  const register = async (userData) => {
-    const { data } = await api.post('/auth/register', userData);
-    setUser(data);
+    setUser(data.user || data);
     return data;
   };
 
   const logout = async () => {
-    await api.post('/auth/logout');
-    setUser(false);
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      // ✅ CORREÇÃO: Remove o token ao sair
+      localStorage.removeItem('token');
+      setUser(false);
+    }
   };
 
   return (
