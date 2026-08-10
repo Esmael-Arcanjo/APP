@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from services.stripe_service import StripeService
 from auth.dependencies import get_current_user
 from database import get_database
+from config import settings
 from datetime import datetime, timezone
 import stripe
 import logging
@@ -27,7 +28,14 @@ async def create_checkout(
     if str(order['client_id']) != current_user['id']:
         raise HTTPException(status_code=403, detail='Not authorized')
     
-    origin_url = str(request.base_url).rstrip('/')
+    origin_url = (
+        request.headers.get('origin')
+        or request.headers.get('referer', '').rstrip('/')
+        or settings.FRONTEND_URL
+    ).rstrip('/')
+    # Sanitize: if FRONTEND_URL is '*' or empty fallback, try Host header
+    if origin_url in ('*', ''):
+        origin_url = f"https://{request.headers.get('host', 'localhost')}"
     success_url = f"{origin_url}/payment/success?session_id={{CHECKOUT_SESSION_ID}}"
     cancel_url = f"{origin_url}/payment/cancel"
     

@@ -51,8 +51,6 @@ function App() {
                   <Route path="/dashboard/seller" element={<ProtectedRoute allowedRoles={['seller', 'admin']}><SellerDashboard /></ProtectedRoute>} />
                   <Route path="/dashboard/client" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 </Routes>
-
-                <VirtualAssistant />
                 <SupportChat />
                 <Toaster position="top-right" richColors />
               </CartProvider>

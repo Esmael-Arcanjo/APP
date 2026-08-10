@@ -20,6 +20,15 @@ async def create_product(
     if current_user['role'] not in ['seller', 'admin']:
         raise HTTPException(status_code=403, detail='Only sellers and admins can create products')
     
+    # Validate category exists
+    try:
+        cat_oid = ObjectId(product_data.category_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail='Invalid category id')
+    category = await db.categories.find_one({'_id': cat_oid, 'deleted_at': None})
+    if not category:
+        raise HTTPException(status_code=400, detail='Category not found')
+    
     product = product_data.model_dump()
     product['seller_id'] = current_user['id']
     product['approval_status'] = 'approved' if current_user['role'] == 'admin' else 'pending'

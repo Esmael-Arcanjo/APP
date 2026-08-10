@@ -78,19 +78,6 @@ const CategoryPage = () => {
               {category.name}
             </h1>
             {category.description && <p className="text-muted-foreground text-lg mb-4">{category.description}</p>}
-            <div className="relative max-w-xl">
-              <input
-                type="text"
-                data-testid="category-search-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={`Buscar em ${category.name}...`}
-                className="w-full px-4 py-3 pr-14 rounded-full bg-muted border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <div className="absolute right-1 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                <Search className="w-5 h-5" />
-              </div>
-            </div>
           </div>
         )}
 

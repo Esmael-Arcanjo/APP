@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +8,59 @@ import { useCurrency } from '../contexts/CurrencyContext';
 import { toast } from 'sonner';
 import { HOME, PRODUCT } from '../constants/testIds';
 import MainLayout from '../layouts/MainLayout';
+
+const DEFAULT_BANNERS = [
+  { id: 'b1', title: '', subtitle: '', image_url: 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1920&h=500&fit=crop' },
+  { id: 'b2', title: '', subtitle: '', image_url: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1920&h=500&fit=crop' },
+  { id: 'b3', title: '', subtitle: '', image_url: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1920&h=500&fit=crop' },
+];
+
+const ProductCard = ({ product, formatPrice, canAddToCart, onAdd, navigate }) => (
+  <div data-testid={PRODUCT.card} className="bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group text-black">
+    <div className="aspect-square bg-gray-50 overflow-hidden" onClick={() => navigate(`/product/${product.id}`)}>
+      {product.images?.[0] ? (
+        <img data-testid={PRODUCT.image} src={product.images[0]} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">Sem imagem</div>
+      )}
+    </div>
+    <div className="p-2.5 space-y-1">
+      <h3 data-testid={PRODUCT.name} className="text-sm leading-snug line-clamp-2 hover:text-[#c7511f] cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>
+        {product.name}
+      </h3>
+      {product.average_rating > 0 && (
+        <div className="flex items-center gap-1 text-xs">
+          <div className="flex">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <Star key={s} className={`w-3 h-3 ${s <= Math.round(product.average_rating) ? 'fill-[#f3a847] text-[#f3a847]' : 'text-gray-300'}`} />
+            ))}
+          </div>
+          <span className="text-blue-600">{product.total_reviews || 0}</span>
+        </div>
+      )}
+      <div className="flex items-baseline gap-1">
+        <span className="text-[11px] align-top">R$</span>
+        <span data-testid={PRODUCT.price} className="text-xl font-bold leading-none">
+          {formatPrice(product.promotional_price || product.price).replace(/[^\d,.]/g, '')}
+        </span>
+        {product.promotional_price && (
+          <span className="text-xs text-gray-500 line-through">{formatPrice(product.price)}</span>
+        )}
+      </div>
+      {canAddToCart && (
+        <button
+          data-testid={PRODUCT.addToCartButton}
+          onClick={() => onAdd(product.id)}
+          disabled={product.stock === 0}
+          className="w-full py-1.5 mt-1 rounded-full text-xs font-semibold text-black disabled:opacity-50"
+          style={{ background: 'linear-gradient(180deg, #f7ca00 0%, #f0a600 100%)' }}
+        >
+          {product.stock === 0 ? 'Esgotado' : 'Adicionar ao carrinho'}
+        </button>
+      )}
+    </div>
+  </div>
+);
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -21,47 +73,20 @@ const HomePage = () => {
   const { user } = useAuth();
   const { formatPrice } = useCurrency();
 
+  const banners = dbBanners.length > 0 ? dbBanners : DEFAULT_BANNERS;
   const canAddToCart = !user || user?.role === 'client';
 
-  const defaultBanners = [
-    {
-      id: 1,
-      title: 'Bem-vindo ao WIBAZA',
-      subtitle: 'Seu Marketplace Internacional',
-      image_url: 'https://images.pexels.com/photos/5872176/pexels-photo-5872176.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=1920',
-    },
-    {
-      id: 2,
-      title: 'Produtos de Qualidade',
-      subtitle: 'Vendedores Verificados',
-      image_url: 'https://images.pexels.com/photos/32912307/pexels-photo-32912307.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=1920',
-    },
-    {
-      id: 3,
-      title: 'Entregas Rápidas',
-      subtitle: 'Para Todo o Mundo',
-      image_url: 'https://images.pexels.com/photos/29505140/pexels-photo-29505140.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=1920',
-    },
-  ];
-
-  const banners = dbBanners.length > 0 ? dbBanners : defaultBanners;
-
+  useEffect(() => { fetchData(); }, []);
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setCurrentSlide((p) => (p + 1) % banners.length), 5000);
+    return () => clearInterval(t);
   }, [banners.length]);
 
   const fetchData = async () => {
     try {
       const [catsRes, prodsRes, bannersRes, annRes] = await Promise.all([
         api.get('/categories'),
-        api.get('/products', { params: { limit: 12 } }),
+        api.get('/products', { params: { limit: 30 } }),
         api.get('/banners').catch(() => ({ data: [] })),
         api.get('/announcements').catch(() => ({ data: [] })),
       ]);
@@ -69,164 +94,129 @@ const HomePage = () => {
       setProducts(prodsRes.data.products || []);
       setDbBanners(bannersRes.data || []);
       setAnnouncements(annRes.data || []);
-    } catch (error) {
-      console.error('Failed to fetch:', error);
-    }
+    } catch (e) { console.error(e); }
   };
 
-  const handleAddToCart = async (productId) => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    try {
-      await addToCart(productId, 1);
-      toast.success('Produto adicionado ao carrinho!');
-    } catch (error) {
-      toast.error('Erro ao adicionar ao carrinho');
-    }
+  const handleAddToCart = async (id) => {
+    if (!user) { navigate('/login'); return; }
+    try { await addToCart(id, 1); toast.success('Adicionado ao carrinho!'); }
+    catch { toast.error('Erro ao adicionar ao carrinho'); }
   };
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % banners.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
+  const nextSlide = () => setCurrentSlide((p) => (p + 1) % banners.length);
+  const prevSlide = () => setCurrentSlide((p) => (p - 1 + banners.length) % banners.length);
+
+  // Group products by category for carousels
+  const byCategory = categories.map((c) => ({
+    category: c,
+    items: products.filter((p) => p.category_id === c.id).slice(0, 8),
+  })).filter((g) => g.items.length > 0);
+
+  // Deal cards: up to 8 categories with their first product image
+  const dealCards = categories.slice(0, 8).map((c) => ({
+    ...c,
+    productImg: products.find((p) => p.category_id === c.id)?.images?.[0] || c.image_url,
+  }));
 
   return (
     <MainLayout fullWidth={true}>
-      {/* Banner Slider - 100% width */}
-      <div className="relative h-[400px] md:h-[500px] overflow-hidden" data-testid={HOME.banner}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0"
-          >
-            <img src={banners[currentSlide].image_url || banners[currentSlide].image} alt={banners[currentSlide].title} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent flex items-center">
-              <div className="max-w-2xl px-6 md:px-12">
-                <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Cabinet Grotesk, sans-serif' }}>
-                  {banners[currentSlide].title}
-                </motion.h1>
-                <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="text-lg md:text-xl text-white/90">
-                  {banners[currentSlide].subtitle}
-                </motion.p>
-              </div>
+      <div className="bg-[#e3e6e6] min-h-screen text-black" data-testid="home-root">
+        {/* Announcements strip */}
+        {announcements.filter(a => a.placement === 'home_top' || a.placement === 'global_banner').length > 0 && (
+          <div className="bg-[#232f3e] text-white text-sm overflow-hidden" data-testid={HOME.banner + '-announce'}>
+            <div className="animate-marquee whitespace-nowrap flex gap-10 py-1.5 px-4">
+              {announcements.filter(a => a.placement === 'home_top' || a.placement === 'global_banner').concat(announcements).map((a, i) => (
+                <span key={i}>📣 <strong>{a.title}</strong> — {a.message}</span>
+              ))}
             </div>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        )}
 
-        <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-colors">
-          <ChevronLeft className="w-6 h-6 text-white" />
-        </button>
-        <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-colors">
-          <ChevronRight className="w-6 h-6 text-white" />
-        </button>
-
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-          {banners.map((_, index) => (
-            <button key={index} onClick={() => setCurrentSlide(index)} className={`h-2 rounded-full transition-all ${index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50'}`} />
+        {/* Hero banner (moderate height, Amazon-like) */}
+        <div className="relative w-full h-[220px] sm:h-[300px] md:h-[380px] lg:h-[420px] overflow-hidden bg-gradient-to-b from-[#232f3e] to-[#e3e6e6]" data-testid={HOME.banner}>
+          {banners.map((b, i) => (
+            <div key={b.id || i} className={`absolute inset-0 transition-opacity duration-700 ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
+              <img src={b.image_url} alt={b.title || 'Banner'} className="w-full h-full object-cover" />
+              {(b.title || b.subtitle) && (
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent flex items-end">
+                  <div className="max-w-2xl px-6 md:px-12 pb-10">
+                    <h2 className="text-2xl md:text-4xl font-black text-white drop-shadow" style={{ fontFamily: 'Cabinet Grotesk, sans-serif' }}>{b.title}</h2>
+                    {b.subtitle && <p className="text-sm md:text-lg text-white/90 mt-1">{b.subtitle}</p>}
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
-        </div>
-      </div>
-
-      {/* Announcements top strip */}
-      {announcements.filter(a => a.placement === 'home_top').length > 0 && (
-        <div className="bg-yellow-400 text-black py-2 overflow-hidden" data-testid="home-announcements">
-          <div className="animate-marquee whitespace-nowrap flex gap-8 px-4">
-            {announcements.filter(a => a.placement === 'home_top' || a.placement === 'global_banner').map((a, i) => (
-              <span key={i} className="text-sm font-semibold">📣 {a.title}: {a.message}</span>
+          {/* Fade to page bg */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#e3e6e6] to-transparent pointer-events-none" />
+          <button onClick={prevSlide} data-testid="banner-prev" className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/70 hover:bg-white transition-colors z-10">
+            <ChevronLeft className="w-6 h-6 text-black" />
+          </button>
+          <button onClick={nextSlide} data-testid="banner-next" className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/70 hover:bg-white transition-colors z-10">
+            <ChevronRight className="w-6 h-6 text-black" />
+          </button>
+          <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            {banners.map((_, i) => (
+              <button key={i} onClick={() => setCurrentSlide(i)} className={`h-1.5 rounded-full transition-all ${i === currentSlide ? 'w-8 bg-white' : 'w-1.5 bg-white/50'}`} />
             ))}
           </div>
         </div>
-      )}
 
-      {/* Categories Amazon Style */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              to={`/category/${category.slug}`}
-              data-testid={HOME.categoryCard}
-              className="bg-surface border border-border rounded-xl overflow-hidden hover:shadow-lg hover:border-primary transition-all group"
-            >
-              <div className="aspect-square bg-muted overflow-hidden">
-                <img
-                  src={category.image_url || 'https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=400'}
-                  alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="p-3 text-center">
-                <h3 className="font-semibold text-sm md:text-base">{category.name}</h3>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+        {/* Deal cards - Amazon style 4 columns */}
+  
 
-      {/* Products Section */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-black mb-6" style={{ fontFamily: 'Cabinet Grotesk, sans-serif' }}>
-            Produtos em Destaque
-          </h2>
+        {/* Featured products carousel */}
+        {products.length > 0 && (
+          <ProductRow title="Produtos em Destaque" products={products.slice(0, 12)} formatPrice={formatPrice} canAddToCart={canAddToCart} onAdd={handleAddToCart} navigate={navigate} />
+        )}
 
-          {products.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">Nenhum produto disponível ainda.</p>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {products.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.03 }}
-                  data-testid={PRODUCT.card}
-                  className="bg-surface border border-border rounded-xl overflow-hidden hover:border-primary transition-all group"
-                >
-                  <div className="aspect-square bg-muted overflow-hidden cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>
-                    {product.images?.[0] ? (
-                      <img data-testid={PRODUCT.image} src={product.images[0]} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">Sem imagem</div>
-                    )}
-                  </div>
-                  <div className="p-3">
-                    <h3 data-testid={PRODUCT.name} className="font-medium text-sm mb-1 line-clamp-2 cursor-pointer h-10" onClick={() => navigate(`/product/${product.id}`)}>
-                      {product.name}
-                    </h3>
-                    <div className="flex items-baseline gap-1 mb-2">
-                      {product.promotional_price ? (
-                        <>
-                          <span data-testid={PRODUCT.price} className="text-lg font-bold text-primary">{formatPrice(product.promotional_price)}</span>
-                          <span className="text-xs text-muted-foreground line-through">{formatPrice(product.price)}</span>
-                        </>
-                      ) : (
-                        <span data-testid={PRODUCT.price} className="text-lg font-bold text-primary">{formatPrice(product.price)}</span>
-                      )}
-                    </div>
-                    {canAddToCart && (
-                      <button
-                        data-testid={PRODUCT.addToCartButton}
-                        onClick={() => handleAddToCart(product.id)}
-                        disabled={product.stock === 0}
-                        className="w-full py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-1"
-                      >
-                        <ShoppingCart className="w-3 h-3" />
-                        {product.stock === 0 ? 'Esgotado' : 'Adicionar'}
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Per-category rows */}
+        {byCategory.map((g) => (
+          <ProductRow key={g.category.id} title={g.category.name} products={g.items} formatPrice={formatPrice} canAddToCart={canAddToCart} onAdd={handleAddToCart} navigate={navigate} link={`/category/${g.category.slug}`} />
+        ))}
+
+        {products.length === 0 && (
+          <div className="text-center py-16 text-gray-500">
+            <p>Nenhum produto disponível ainda. Aguarde os primeiros vendedores publicarem seus produtos!</p>
+          </div>
+        )}
+
+        {/* Footer */}
+        <footer className="bg-[#232f3e] text-white mt-10">
+          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="w-full py-3 bg-[#37475a] hover:bg-[#485769] text-sm font-medium">Voltar ao topo</button>
+          <div className="bg-[#131a22] text-center text-xs py-4 text-gray-400">© 2026 WIBAZA. Todos os direitos reservados.</div>
+        </footer>
       </div>
     </MainLayout>
+  );
+};
+
+const ProductRow = ({ title, products, formatPrice, canAddToCart, onAdd, navigate, link }) => {
+  const scrollRef = useRef(null);
+  const scroll = (dir) => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir * 500, behavior: 'smooth' });
+  };
+  return (
+    <div className="px-3 md:px-4 py-4">
+      <div className="bg-white rounded-md p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg md:text-2xl font-bold">{title}</h2>
+          {link && <Link to={link} className="text-sm text-[#007185] hover:text-[#c7511f] hover:underline">Ver todos</Link>}
+        </div>
+        <div className="relative">
+          <button onClick={() => scroll(-1)} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-16 bg-white shadow-lg hover:bg-gray-50 items-center justify-center rounded"><ChevronLeft className="w-5 h-5" /></button>
+          <div ref={scrollRef} className="flex gap-3 overflow-x-auto no-scrollbar snap-x scroll-smooth">
+            {products.map((p) => (
+              <div key={p.id} className="min-w-[160px] w-[160px] md:min-w-[200px] md:w-[200px] snap-start">
+                <ProductCard product={p} formatPrice={formatPrice} canAddToCart={canAddToCart} onAdd={onAdd} navigate={navigate} />
+              </div>
+            ))}
+          </div>
+          <button onClick={() => scroll(1)} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-16 bg-white shadow-lg hover:bg-gray-50 items-center justify-center rounded"><ChevronRight className="w-5 h-5" /></button>
+        </div>
+      </div>
+    </div>
   );
 };
 
