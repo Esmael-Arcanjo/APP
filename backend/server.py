@@ -22,9 +22,18 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title='WIBAZA API', version='1.0.0')
 
+# Trata múltiplos domínios na variável FRONTEND_URL
+raw_origins = getattr(settings, 'FRONTEND_URL', '*') or '*'
+
+if raw_origins == '*':
+    allowed_origins = ['*']
+else:
+    # Separa pelas vírgulas e remove espaços em branco
+    allowed_origins = [url.strip().rstrip('/') for url in raw_origins.split(',') if url.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL] if settings.FRONTEND_URL != '*' else ['*'],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
