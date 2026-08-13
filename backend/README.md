@@ -1,7 +1,5 @@
 
 
-
-
 # 1. Criar o ambiente virtual
 python -m venv venv
 

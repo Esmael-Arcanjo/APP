@@ -2,7 +2,7 @@
 
 ## Admin Account
 - **Email:** admin@wibaza.com
-- **Password:** Admin@Wibaza2026
+- **Password:** Admin@2026Wibaza
 - **Role:** admin
 
 ## Endpoints

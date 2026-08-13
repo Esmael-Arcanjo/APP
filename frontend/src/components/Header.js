@@ -150,7 +150,7 @@ const Header = () => {
                   <Link to={user ? '/cart' : '/login'} data-testid={HEADER.cartIcon} className="flex items-end gap-1 px-2 py-1 rounded border border-transparent hover:border-white transition-colors">
                     <div className="relative">
                       <ShoppingCart className="w-7 h-7" />
-                      <span className="absolute -top-1 left-4 text-[#f3a847] text-sm font-bold">{cartCount || 0}</span>
+                      <span className="absolute -top-1 left-4 text-[#E53E3E] text-sm font-bold">{cartCount || 0}</span>
                     </div>
                     <span className="text-sm font-bold hidden lg:block pb-0.5"></span>
                   </Link>

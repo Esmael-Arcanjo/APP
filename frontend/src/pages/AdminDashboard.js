@@ -173,7 +173,6 @@ const AdminDashboard = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h1 className="text-3xl md:text-4xl font-black" style={{ fontFamily: 'Cabinet Grotesk, sans-serif' }}>Dashboard Admin</h1>
-          <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">Amazon-style Marketplace Control</span>
         </div>
 
         {/* Tabs - horizontally scrollable */}

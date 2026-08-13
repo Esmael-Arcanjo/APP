@@ -114,16 +114,34 @@ const RegisterPage = () => {
               </div>
             </div>
 
+            {/* Seleção do Tipo de Conta com Radio Buttons */}
             <div>
               <label className="block text-sm font-medium mb-2">Tipo de Conta</label>
-              <select
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="client">Cliente</option>
-                <option value="seller">Vendedor</option>
-              </select>
+              <div className="flex items-center space-x-6 pt-1">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="client"
+                    checked={formData.role === 'client'}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    className="w-4 h-4 text-primary focus:ring-primary border-border bg-background accent-primary cursor-pointer"
+                  />
+                  <span className="text-sm font-medium">Cliente</span>
+                </label>
+
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="seller"
+                    checked={formData.role === 'seller'}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    className="w-4 h-4 text-primary focus:ring-primary border-border bg-background accent-primary cursor-pointer"
+                  />
+                  <span className="text-sm font-medium">Vendedor</span>
+                </label>
+              </div>
             </div>
 
             <button

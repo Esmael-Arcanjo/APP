@@ -130,7 +130,7 @@ async def remove_from_cart(
     
     return {'message': 'Item removed from cart'}
 
-@router.delete('/')
+@router.delete('')
 async def clear_cart(current_user: dict = Depends(get_current_user), db=Depends(get_database)):
     """Clear cart"""
     await db.carts.update_one(
@@ -139,3 +139,5 @@ async def clear_cart(current_user: dict = Depends(get_current_user), db=Depends(
     )
     
     return {'message': 'Cart cleared'}
+
+
