@@ -21,12 +21,13 @@ async def register(user_data: UserCreate, response: Response, db=Depends(get_dat
         access_token = create_access_token(user['id'], user['email'], user['role'])
         refresh_token = create_refresh_token(user['id'])
         
+        # Ajustado secure=True e samesite='none' para HTTPS na Render
         response.set_cookie(
             key='access_token',
             value=access_token,
             httponly=True,
-            secure=False,
-            samesite='lax',
+            secure=True,
+            samesite='none',
             max_age=900,
             path='/'
         )
@@ -34,8 +35,8 @@ async def register(user_data: UserCreate, response: Response, db=Depends(get_dat
             key='refresh_token',
             value=refresh_token,
             httponly=True,
-            secure=False,
-            samesite='lax',
+            secure=True,
+            samesite='none',
             max_age=604800,
             path='/'
         )
@@ -45,7 +46,13 @@ async def register(user_data: UserCreate, response: Response, db=Depends(get_dat
         except Exception as e:
             logger.error(f'Failed to send welcome email: {str(e)}')
         
-        return user
+        # Agora retorna o token no JSON para salvar no localStorage
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer",
+            "user": user
+        }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -70,12 +77,13 @@ async def login(login_data: LoginRequest, response: Response, db=Depends(get_dat
     access_token = create_access_token(user['id'], user['email'], user['role'])
     refresh_token = create_refresh_token(user['id'])
     
+    # Ajustado secure=True e samesite='none' para HTTPS na Render
     response.set_cookie(
         key='access_token',
         value=access_token,
         httponly=True,
-        secure=False,
-        samesite='lax',
+        secure=True,
+        samesite='none',
         max_age=900,
         path='/'
     )
@@ -83,19 +91,25 @@ async def login(login_data: LoginRequest, response: Response, db=Depends(get_dat
         key='refresh_token',
         value=refresh_token,
         httponly=True,
-        secure=False,
-        samesite='lax',
+        secure=True,
+        samesite='none',
         max_age=604800,
         path='/'
     )
     
-    return user
+    # Agora envia o access_token explicitamente no JSON
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "user": user
+    }
 
 @router.post('/logout')
 async def logout(response: Response, current_user: dict = Depends(get_current_user)):
     """Logout user"""
-    response.delete_cookie(key='access_token', path='/')
-    response.delete_cookie(key='refresh_token', path='/')
+    response.delete_cookie(key='access_token', path='/', samesite='none', secure=True)
+    response.delete_cookie(key='refresh_token', path='/', samesite='none', secure=True)
     return {'message': 'Logged out successfully'}
 
 @router.get('/me')
@@ -106,8 +120,14 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user)):
 @router.post('/refresh')
 async def refresh_token(request: Request, response: Response, db=Depends(get_database)):
     """Refresh access token"""
+    # Tenta pegar do cookie ou do Header Authorization
     refresh = request.cookies.get('refresh_token')
     
+    if not refresh:
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            refresh = auth_header.split(' ')[1]
+
     if not refresh:
         raise HTTPException(status_code=401, detail='No refresh token')
     
@@ -128,13 +148,17 @@ async def refresh_token(request: Request, response: Response, db=Depends(get_dat
             key='access_token',
             value=access_token,
             httponly=True,
-            secure=False,
-            samesite='lax',
+            secure=True,
+            samesite='none',
             max_age=900,
             path='/'
         )
         
-        return {'message': 'Token refreshed'}
+        return {
+            'access_token': access_token,
+            'token_type': 'bearer',
+            'message': 'Token refreshed'
+        }
     
     except Exception as e:
         raise HTTPException(status_code=401, detail='Invalid refresh token')
@@ -164,8 +188,7 @@ async def reset_password(request: PasswordResetConfirm, db=Depends(get_database)
     
     return {'message': 'Password reset successfully'}
 
-
-# ---- Google OAuth (prepared - add GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET in .env to enable) ----
+# ---- Google OAuth ----
 from pydantic import BaseModel
 
 class GoogleAuthBody(BaseModel):
@@ -173,7 +196,6 @@ class GoogleAuthBody(BaseModel):
 
 @router.get('/google/config')
 async def google_config():
-    """Returns Google OAuth Client ID for frontend usage. Empty if not configured."""
     from config import settings
     return {
         'client_id': settings.GOOGLE_CLIENT_ID,
@@ -182,10 +204,9 @@ async def google_config():
 
 @router.post('/google')
 async def google_signin(body: GoogleAuthBody, response: Response, db=Depends(get_database)):
-    """Sign in / sign up with a Google ID token. Requires GOOGLE_CLIENT_ID configured."""
     from config import settings
     if not settings.GOOGLE_CLIENT_ID:
-        raise HTTPException(status_code=503, detail='Google OAuth not configured. Set GOOGLE_CLIENT_ID in backend .env')
+        raise HTTPException(status_code=503, detail='Google OAuth not configured.')
     try:
         from google.oauth2 import id_token as google_id_token
         from google.auth.transport import requests as google_requests
@@ -232,6 +253,12 @@ async def google_signin(body: GoogleAuthBody, response: Response, db=Depends(get
 
     access_token = create_access_token(user['id'], user['email'], user['role'])
     refresh = create_refresh_token(user['id'])
-    response.set_cookie('access_token', access_token, httponly=True, secure=False, samesite='lax', max_age=900, path='/')
-    response.set_cookie('refresh_token', refresh, httponly=True, secure=False, samesite='lax', max_age=604800, path='/')
-    return user
+    response.set_cookie('access_token', access_token, httponly=True, secure=True, samesite='none', max_age=900, path='/')
+    response.set_cookie('refresh_token', refresh, httponly=True, secure=True, samesite='none', max_age=604800, path='/')
+    
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh,
+        "token_type": "bearer",
+        "user": user
+    }
