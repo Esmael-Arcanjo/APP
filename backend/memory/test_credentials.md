@@ -1,8 +1,8 @@
 # WIBAZA Test Credentials
 
 ## Admin Account
-- **Email:** admin@wibaza.com
-- **Password:** Admin@2026Wibaza
+- **Email:** leamnse@gmail.com
+- **Password:** AdminWibaza1@#
 - **Role:** admin
 
 ## Endpoints

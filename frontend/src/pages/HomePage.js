@@ -133,35 +133,7 @@ const HomePage = () => {
         )}
 
         {/* Hero banner (moderate height, Amazon-like) */}
-        <div className="relative w-full h-[220px] sm:h-[300px] md:h-[380px] lg:h-[420px] overflow-hidden bg-gradient-to-b from-[#232f3e] to-[#e3e6e6]" data-testid={HOME.banner}>
-          {banners.map((b, i) => (
-            <div key={b.id || i} className={`absolute inset-0 transition-opacity duration-700 ${i === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
-              <img src={b.image_url} alt={b.title || 'Banner'} className="w-full h-full object-cover" />
-              {(b.title || b.subtitle) && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent flex items-end">
-                  <div className="max-w-2xl px-6 md:px-12 pb-10">
-                    <h2 className="text-2xl md:text-4xl font-black text-white drop-shadow" style={{ fontFamily: 'Cabinet Grotesk, sans-serif' }}>{b.title}</h2>
-                    {b.subtitle && <p className="text-sm md:text-lg text-white/90 mt-1">{b.subtitle}</p>}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-          {/* Fade to page bg */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#e3e6e6] to-transparent pointer-events-none" />
-          <button onClick={prevSlide} data-testid="banner-prev" className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/70 hover:bg-white transition-colors z-10">
-            <ChevronLeft className="w-6 h-6 text-black" />
-          </button>
-          <button onClick={nextSlide} data-testid="banner-next" className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/70 hover:bg-white transition-colors z-10">
-            <ChevronRight className="w-6 h-6 text-black" />
-          </button>
-          <div className="absolute bottom-14 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-            {banners.map((_, i) => (
-              <button key={i} onClick={() => setCurrentSlide(i)} className={`h-1.5 rounded-full transition-all ${i === currentSlide ? 'w-8 bg-white' : 'w-1.5 bg-white/50'}`} />
-            ))}
-          </div>
-        </div>
-
+        
         {/* Deal cards - Amazon style 4 columns */}
   
 

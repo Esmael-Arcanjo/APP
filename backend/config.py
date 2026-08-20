@@ -7,8 +7,8 @@ load_dotenv(ROOT_DIR / '.env')
 
 class Settings:
     # MongoDB
-    MONGO_URL: str = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-    DB_NAME: str = os.environ.get('DB_NAME', 'wibaza_marketplace')
+    MONGO_URL: str = os.environ.get('MONGO_URL', '')
+    DB_NAME: str = os.environ.get('DB_NAME', 'WIBAZA')
     
     # JWT
     JWT_SECRET: str = os.environ.get('JWT_SECRET', '')
@@ -17,18 +17,18 @@ class Settings:
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
     # Admin
-    ADMIN_EMAIL: str = os.environ.get('ADMIN_EMAIL', 'admin@wibaza.com')
-    ADMIN_PASSWORD: str = os.environ.get('ADMIN_PASSWORD', 'admin123')
+    ADMIN_EMAIL: str = os.environ.get('ADMIN_EMAIL', 'leamnse@gmail.com')
+    ADMIN_PASSWORD: str = os.environ.get('ADMIN_PASSWORD', 'AdminWibaza1@#')
     
     # CORS
     CORS_ORIGINS: list = os.environ.get('CORS_ORIGINS', '*').split(',')
     FRONTEND_URL: str = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
     
     # Stripe
-    STRIPE_SECRET_KEY: str = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_emergent')
+    STRIPE_SECRET_KEY: str = os.environ.get('STRIPE_SECRET_KEY', '')
     STRIPE_PUBLISHABLE_KEY: str = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
     STRIPE_WEBHOOK_SECRET: str = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
-    STRIPE_MODE: str = os.environ.get('STRIPE_MODE', 'test')
+    STRIPE_MODE: str = os.environ.get('STRIPE_MODE', '')
     
     # Resend
     RESEND_API_KEY: str = os.environ.get('RESEND_API_KEY', '')

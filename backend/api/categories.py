@@ -6,6 +6,8 @@ from auth.dependencies import require_role
 from database import get_database
 from datetime import datetime, timezone
 import re
+from pymongo.errors import DuplicateKeyError
+from fastapi import APIRouter, Depends, HTTPException, status
 
 router = APIRouter(prefix='/api/categories', tags=['categories'])
 
@@ -16,31 +18,42 @@ def slugify(text: str) -> str:
     text = re.sub(r'[\s-]+', '-', text)
     return text.strip('-')
 
-@router.post('/')
+
+@router.post("/")
 async def create_category(
     category_data: CategoryCreate,
-    current_user: dict = Depends(require_role('admin')),
-    db=Depends(get_database)
+    current_user: dict = Depends(require_role("admin")),
+    db=Depends(get_database),
 ):
     """Create category (Admin only)"""
     slug = slugify(category_data.name)
-    
-    existing = await db.categories.find_one({'slug': slug, 'deleted_at': None})
+
+    # Verifica se já existe uma categoria ativa com o mesmo slug
+    existing = await db.categories.find_one({"slug": slug, "deleted_at": None})
     if existing:
-        raise HTTPException(status_code=400, detail='Category with this name already exists')
-    
+        raise HTTPException(
+            status_code=400, detail="Category with this name already exists"
+        )
+
     category = category_data.model_dump()
-    category['slug'] = slug
-    category['order'] = 0
-    category['is_active'] = True
-    category['created_at'] = datetime.now(timezone.utc)
-    category['updated_at'] = datetime.now(timezone.utc)
-    category['deleted_at'] = None
-    
-    result = await db.categories.insert_one(category)
-    category['id'] = str(result.inserted_id)
-    category.pop('_id', None)
-    
+    category["slug"] = slug
+    category["order"] = 0
+    category["is_active"] = True
+    category["created_at"] = datetime.now(timezone.utc)
+    category["updated_at"] = datetime.now(timezone.utc)
+    category["deleted_at"] = None
+
+    try:
+        result = await db.categories.insert_one(category)
+    except DuplicateKeyError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Category with this name or slug already exists in the database (including deleted ones).",
+        )
+
+    category["id"] = str(result.inserted_id)
+    category.pop("_id", None)
+
     return category
 
 @router.get('')

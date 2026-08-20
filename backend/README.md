@@ -55,3 +55,6 @@ git add .
 git commit -m "atualizando"
 git push origin main
 
+
+# para gerar chave secreta 
+python3 -c "import secrets; print(secrets.token_hex(32))"
