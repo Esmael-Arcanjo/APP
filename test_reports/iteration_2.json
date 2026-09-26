@@ -1,0 +1,31 @@
+{
+  "summary": "Retest after aligning REACT_APP_BACKEND_URL to same host as frontend (https://biolinks-pro-3.preview.emergentagent.com). All 11 functional endpoints requested by the review pass: /api/health, /api/public/pricing, /api/public/geo, /api/public/coupons/WELCOME20, /api/auth/login (admin flat shape with access_token), /api/auth/me, /api/auth/register (email service with country=BR currency=BRL), /api/billing/checkout (fresh registered user → returns Stripe checkout_url), /api/admin/stats, /api/admin/users, /api/admin/metrics/timeseries (12 months). The 5 remaining preflight-parametrized failures are the SAME infra-level edge ACAO rewrite as iteration_1 (edge returns *.cluster-3.preview.emergentcf.cloud instead of the request Origin) — but because the fix is same-origin (frontend and backend on identical host), the browser skips CORS enforcement entirely, so these are non-blocking. The user's original CORS error is resolved for the real user flow.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "OPTIONS /api/*", "issue": "Emergent edge still rewrites Access-Control-Allow-Origin to https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud regardless of request Origin. Not user-facing because same-origin requests bypass CORS in the browser. Only matters if the app ever makes cross-origin calls in the future."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_cors_and_auth.py",
+    "/app/test_reports/pytest/iteration_2.xml"
+  ],
+  "action_items": [
+    "No backend fix required — same-origin alignment resolves the reported CORS bug end-to-end.",
+    "If Emergent infra ever forces cross-origin (e.g. different subdomain for API), request infra team to stop rewriting Access-Control-Allow-Origin at the edge."
+  ],
+  "critical_code_review_comments": [
+    "Backend CORS (allow_origin_regex='.*', allow_credentials=True) is correct; combined with same-origin frontend, no changes needed.",
+    "Login response shape remains FLAT (access_token + email/id/name/role/organization_id/locale siblings). Ensure frontend reads response.access_token and response.email, not response.user.*.",
+    "Register requires 'name' + 'company' + 'service' (singular). Frontend must send these keys."
+  ],
+  "updated_files": ["/app/backend/tests/test_cors_and_auth.py"],
+  "success_rate": {"backend": "100% functional (11/11); 5 preflight parametrized tests fail on infra ACAO rewrite but are irrelevant for same-origin.", "frontend": "not tested"},
+  "test_credentials": "Admin suportwibaza@hotmail.com / LeamseAdmin2026! — verified. Register creates unique test_<uuid>@example.com users successfully.",
+  "seed_data_creation": "Two ephemeral test users created per run (test_<uuid>@example.com) — no cleanup implemented.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Same-origin fix confirmed. All 11 endpoints in the review pass. Ignore preflight failures — they are infra ACAO rewrites and don't affect the browser (same-origin skips CORS). To re-run: pytest /app/backend/tests/test_cors_and_auth.py -v",
+  "rca_of_the_issue": "User's CORS error was caused by frontend (biolinks-pro-3...) calling backend on a different subdomain (bc5385ca-...) where the Emergent edge rewrote ACAO. Fix applied by E1: point REACT_APP_BACKEND_URL to the same host the frontend is served on. Confirmed: /api/health, auth login/me/register, public pricing/geo/coupons, billing checkout, admin stats/users/metrics all return 200 with valid data on the same-origin URL. Browser now skips CORS enforcement entirely, so the edge ACAO rewrite is inconsequential."
+}

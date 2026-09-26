@@ -1,0 +1,45 @@
+{
+  "summary": "Backend-only CORS + auth verification for LEAMSE. Backend FastAPI CORS config (allow_origin_regex='.*', allow_credentials=True) works correctly on localhost:8001 — it reflects the exact request Origin. However, when hitting the public preview URL, the Emergent Cloudflare/ingress edge REWRITES the Access-Control-Allow-Origin header to a fixed *.cluster-3.preview.emergentcf.cloud domain that does NOT match the actual browser Origin. This means the user's original CORS error will persist regardless of the backend code fix. All auth/public/admin/billing endpoints themselves work end-to-end (9/14 passed; the 5 failures are all the edge-CORS mismatch). Login response fields are top-level (no nested 'user' key). Register requires 'name' + 'company' (not 'full_name'). Billing checkout requires 'origin_url'.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "OPTIONS /api/* (all endpoints via public preview URL)",
+        "issue": "Emergent edge/ingress OVERRIDES Access-Control-Allow-Origin header. Request Origin 'https://biolinks-pro-3.preview.emergentagent.com' → response ACAO 'https://bc5385ca-7160-4b75-8700-afb3296fe727.cluster-3.preview.emergentcf.cloud'. Browser will reject CORS with credentials because ACAO must exactly match the Origin. Backend FastAPI middleware itself reflects Origin correctly when tested against localhost:8001. Root cause is infrastructure-level header rewriting, not backend code. Recommended fix: set frontend/.env REACT_APP_BACKEND_URL to the SAME host the frontend is served from (e.g. https://biolinks-pro-3.preview.emergentagent.com) so calls are same-origin and CORS is not enforced by the browser at all. Currently frontend host (biolinks-pro-3...) and backend host (bc5385ca-...) are different subdomains, forcing cross-origin requests through an edge that mangles ACAO.",
+        "priority": "CRITICAL"
+      }
+    ],
+    "minor": [
+      {"endpoint": "POST /api/auth/register", "issue": "Schema requires fields 'name' and 'company' (not 'full_name'). Front-end must match."},
+      {"endpoint": "POST /api/billing/checkout", "issue": "Requires 'origin_url' in body — front-end must send its own origin."},
+      {"endpoint": "POST /api/auth/login", "issue": "Response returns user fields (id, email, name, role, organization_id, locale, access_token) at TOP LEVEL — there is no nested 'user' object. Any frontend code doing response.user.email will break; use response.email."}
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_cors_and_auth.py",
+    "/app/test_reports/pytest/cors_auth.xml"
+  ],
+  "action_items": [
+    "PRIMARY FIX for the user's CORS error: change /app/frontend/.env REACT_APP_BACKEND_URL to the SAME host the frontend is served on (e.g. https://biolinks-pro-3.preview.emergentagent.com). Same-origin requests bypass CORS entirely and are unaffected by the Emergent edge ACAO rewrite. This is the only reliable fix; the backend allow_origin_regex change is correct but cannot overcome the edge overwriting the header.",
+    "If the frontend MUST call a different backend host (multi-service preview), request Emergent infra to stop overriding Access-Control-Allow-Origin at the ingress/edge layer.",
+    "Verify frontend uses correct register payload keys ('name', 'company', not 'full_name').",
+    "Verify frontend reads login/register user data at top level of the response (not response.user.*).",
+    "Ensure billing checkout call includes origin_url (usually window.location.origin)."
+  ],
+  "critical_code_review_comments": [
+    "Backend CORS config in /app/backend/app/main.py (allow_origin_regex='.*' + allow_credentials=True + allow_methods=['*'] + allow_headers=['*']) is functionally correct and reflects Origin as verified on localhost:8001.",
+    "Consider tightening allow_origin_regex to a specific pattern of trusted preview domains rather than '.*' for production hardening (currently OK for preview).",
+    "Register endpoint expects both 'name' and 'company' as required — evaluate whether 'company' should be optional for solo users.",
+    "Login response returns user fields flat alongside access_token — consider returning a nested {user: {...}, access_token: ...} shape for clarity and to isolate token from user fields."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_cors_and_auth.py"
+  ],
+  "success_rate": {"backend": "64% (9/14 - all 5 failures are edge-CORS infra, not backend code)", "frontend": "not tested"},
+  "test_credentials": "Admin: suportwibaza@hotmail.com / LeamseAdmin2026! — login verified 200 with access_token. Newly registered users also receive access_token.",
+  "seed_data_creation": "Each register test creates a unique test_<uuid>@example.com user; no cleanup implemented (test data prefixed with 'test_').",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend CORS is correct at the app layer (proven via localhost:8001 OPTIONS returning the exact request Origin). The user-visible CORS error is caused by the Emergent edge (Cloudflare) rewriting Access-Control-Allow-Origin to a *.cluster-3.preview.emergentcf.cloud host that never matches the browser Origin. Best fix is to align frontend REACT_APP_BACKEND_URL to be the same host as the frontend, making requests same-origin. Do NOT waste more time tweaking allow_origins / allow_origin_regex in the backend — it will not help. Re-run /app/backend/tests/test_cors_and_auth.py after the frontend .env change (URL will be same-origin so OPTIONS may return 200 without any ACAO — which is fine for same-origin).",
+  "rca_of_the_issue": "SYMPTOM: browser blocks all /api requests with 'Access-Control-Allow-Origin must not be wildcard when credentials mode is include'. INITIAL CAUSE: backend used allow_origins=['*'] with allow_credentials=True. E1 correctly changed to allow_origin_regex='.*'. VERIFICATION on localhost:8001: OPTIONS returns access-control-allow-origin: https://biolinks-pro-3.preview.emergentagent.com (exact reflection) — backend fix works. VERIFICATION via public URL: OPTIONS returns access-control-allow-origin: https://bc5385ca-7160-4b75-8700-afb3296fe727.cluster-3.preview.emergentcf.cloud — the edge OVERWRITES the header. Any Origin sent by the client yields the same hardcoded ACAO value. Since this value never matches the browser's Origin, CORS credentialed requests will always fail. REAL FIX: use same-origin (align REACT_APP_BACKEND_URL with the site's host)."
+}

@@ -1,0 +1,8 @@
+crons:
+  - name: trial-ending
+    description: "Sends a reminder 2 days before each 7-day LEAMSE trial ends"
+    cron: "0 10 * * *"
+    endpoint: "{{BASE_URL}}/api/cron/trial-ending"
+    method: POST
+    # Cron endpoints must ack 2xx immediately; enqueue/background the actual work.
+    enabled: true

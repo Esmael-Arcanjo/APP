@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        
+        <!-- Meta Tags Principais -->
+        <title>Leamse</title>
+        <meta name="title" content="Leamse" />
+        <meta name="description" content="Bem-vindo ao Leamse." />
+        <link rel="canonical" href="https://leamse.com/" />
+
+        <!-- Open Graph / Facebook / WhatsApp -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://leamse.com/" />
+        <meta property="og:title" content="Leamse" />
+        <meta property="og:description" content="Bem-vindo ao Leamse." />
+
+        <!-- Twitter / X -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://leamse.com/" />
+        <meta property="twitter:title" content="Leamse" />
+        <meta property="twitter:description" content="Bem-vindo ao Leamse." />
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet" />
+
+        <!-- Tratamento de Erro de Performance -->
+        <script>
+            window.addEventListener("error", function(e) {
+                if (e.error instanceof DOMException && e.error.name === "DataCloneError" && e.message && e.message.includes("PerformanceServerTiming")) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                }
+            }, true);
+        </script>
+    </head>
+    <body>
+        <noscript>Você precisa habilitar o JavaScript para rodar este aplicativo.</noscript>
+        <div id="root"></div>
+    </body>
+</html>

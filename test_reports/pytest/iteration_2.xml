@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="16" time="6.069" timestamp="2026-09-11T13:49:09.278610+00:00" hostname="agent-env-bc5385ca-7160-4b75-8700-afb3296fe727"><testcase classname="tests.test_cors_and_auth" name="test_health" time="0.245" /><testcase classname="tests.test_cors_and_auth" name="test_cors_preflight_same_origin[/api/auth/register-POST]" time="0.192"><failure message="AssertionError: /api/auth/register ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'&#10;assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'&#10;  &#10;  - https://biolinks-pro-3.preview.emergentagent.com&#10;  ?                                        ^^^^^   ^&#10;  + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud&#10;  ?                        ++++++++++                ^^  + ^^">backend/tests/test_cors_and_auth.py:53: in test_cors_preflight_same_origin
+    assert acao == ORIGIN, f"{path} ACAO={acao!r} != Origin {ORIGIN!r}"
+E   AssertionError: /api/auth/register ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'
+E   assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'
+E     
+E     - https://biolinks-pro-3.preview.emergentagent.com
+E     ?                                        ^^^^^   ^
+E     + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud
+E     ?                        ++++++++++                ^^  + ^^</failure></testcase><testcase classname="tests.test_cors_and_auth" name="test_cors_preflight_same_origin[/api/auth/login-POST]" time="0.198"><failure message="AssertionError: /api/auth/login ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'&#10;assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'&#10;  &#10;  - https://biolinks-pro-3.preview.emergentagent.com&#10;  ?                                        ^^^^^   ^&#10;  + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud&#10;  ?                        ++++++++++                ^^  + ^^">backend/tests/test_cors_and_auth.py:53: in test_cors_preflight_same_origin
+    assert acao == ORIGIN, f"{path} ACAO={acao!r} != Origin {ORIGIN!r}"
+E   AssertionError: /api/auth/login ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'
+E   assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'
+E     
+E     - https://biolinks-pro-3.preview.emergentagent.com
+E     ?                                        ^^^^^   ^
+E     + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud
+E     ?                        ++++++++++                ^^  + ^^</failure></testcase><testcase classname="tests.test_cors_and_auth" name="test_cors_preflight_same_origin[/api/auth/me-GET]" time="0.204"><failure message="AssertionError: /api/auth/me ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'&#10;assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'&#10;  &#10;  - https://biolinks-pro-3.preview.emergentagent.com&#10;  ?                                        ^^^^^   ^&#10;  + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud&#10;  ?                        ++++++++++                ^^  + ^^">backend/tests/test_cors_and_auth.py:53: in test_cors_preflight_same_origin
+    assert acao == ORIGIN, f"{path} ACAO={acao!r} != Origin {ORIGIN!r}"
+E   AssertionError: /api/auth/me ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'
+E   assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'
+E     
+E     - https://biolinks-pro-3.preview.emergentagent.com
+E     ?                                        ^^^^^   ^
+E     + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud
+E     ?                        ++++++++++                ^^  + ^^</failure></testcase><testcase classname="tests.test_cors_and_auth" name="test_cors_preflight_same_origin[/api/public/pricing-GET]" time="0.163"><failure message="AssertionError: /api/public/pricing ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'&#10;assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'&#10;  &#10;  - https://biolinks-pro-3.preview.emergentagent.com&#10;  ?                                        ^^^^^   ^&#10;  + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud&#10;  ?                        ++++++++++                ^^  + ^^">backend/tests/test_cors_and_auth.py:53: in test_cors_preflight_same_origin
+    assert acao == ORIGIN, f"{path} ACAO={acao!r} != Origin {ORIGIN!r}"
+E   AssertionError: /api/public/pricing ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'
+E   assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'
+E     
+E     - https://biolinks-pro-3.preview.emergentagent.com
+E     ?                                        ^^^^^   ^
+E     + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud
+E     ?                        ++++++++++                ^^  + ^^</failure></testcase><testcase classname="tests.test_cors_and_auth" name="test_cors_preflight_same_origin[/api/public/geo-GET]" time="0.191"><failure message="AssertionError: /api/public/geo ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'&#10;assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'&#10;  &#10;  - https://biolinks-pro-3.preview.emergentagent.com&#10;  ?                                        ^^^^^   ^&#10;  + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud&#10;  ?                        ++++++++++                ^^  + ^^">backend/tests/test_cors_and_auth.py:53: in test_cors_preflight_same_origin
+    assert acao == ORIGIN, f"{path} ACAO={acao!r} != Origin {ORIGIN!r}"
+E   AssertionError: /api/public/geo ACAO='https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud' != Origin 'https://biolinks-pro-3.preview.emergentagent.com'
+E   assert 'https://biol...rgentcf.cloud' == 'https://biol...gentagent.com'
+E     
+E     - https://biolinks-pro-3.preview.emergentagent.com
+E     ?                                        ^^^^^   ^
+E     + https://biolinks-pro-3.cluster-3.preview.emergentcf.cloud
+E     ?                        ++++++++++                ^^  + ^^</failure></testcase><testcase classname="tests.test_cors_and_auth" name="test_public_pricing" time="0.201" /><testcase classname="tests.test_cors_and_auth" name="test_public_geo" time="0.360" /><testcase classname="tests.test_cors_and_auth" name="test_public_coupon_welcome20" time="0.285" /><testcase classname="tests.test_cors_and_auth" name="test_admin_login_flat_shape" time="0.630" /><testcase classname="tests.test_cors_and_auth" name="test_admin_me" time="0.112" /><testcase classname="tests.test_cors_and_auth" name="test_register_email_service_br_and_me" time="0.791" /><testcase classname="tests.test_cors_and_auth" name="test_billing_checkout_email_monthly_trial_fresh_user" time="1.586" /><testcase classname="tests.test_cors_and_auth" name="test_admin_stats" time="0.115" /><testcase classname="tests.test_cors_and_auth" name="test_admin_users" time="0.110" /><testcase classname="tests.test_cors_and_auth" name="test_admin_metrics_timeseries_12_months" time="0.119" /></testsuite></testsuites>

@@ -1,0 +1,129 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 24.6 95% 53.1%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        --accent: 24.6 95% 95.5%;
+        --accent-foreground: 24.6 95% 40%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --success: 142 71% 36%;
+        --warning: 38 92% 50%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 24.6 95% 53.1%;
+        --surface: 30 40% 98%;
+        --chart-1: 24.6 95% 53.1%;
+        --chart-2: 32 95% 54%;
+        --chart-3: 0 84% 62%;
+        --chart-4: 262 60% 58%;
+        --chart-5: 199 89% 48%;
+        --radius: 1rem;
+    }
+    .dark {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 5.9% 10%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 5.9% 10%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 24.6 95% 53.1%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 17%;
+        --accent-foreground: 24.6 95% 63.1%;
+        --destructive: 0 63% 45%;
+        --destructive-foreground: 0 0% 98%;
+        --success: 142 60% 45%;
+        --warning: 38 92% 55%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 24.6 95% 53.1%;
+        --surface: 240 5.9% 10%;
+        --chart-1: 24.6 95% 55%;
+        --chart-2: 32 95% 58%;
+        --chart-3: 0 84% 65%;
+        --chart-4: 262 70% 68%;
+        --chart-5: 199 89% 58%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+    }
+    h1, h2, h3, h4, .font-display {
+        font-family: "Manrope", system-ui, sans-serif;
+        letter-spacing: -0.025em;
+    }
+    code, pre, .font-mono {
+        font-family: "IBM Plex Mono", monospace;
+    }
+    ::selection {
+        background: hsl(var(--primary) / 0.22);
+    }
+}
+
+@layer components {
+    .ls-card {
+        @apply rounded-2xl border border-border bg-card shadow-[0_4px_24px_rgba(15,23,42,0.04)];
+    }
+    .ls-surface {
+        @apply bg-[hsl(var(--surface))];
+    }
+    .ls-num {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+    }
+    .ls-lift {
+        @apply transition-transform duration-200 hover:-translate-y-0.5;
+    }
+    .ls-grain::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.4;
+        background-image: radial-gradient(hsl(var(--primary) / 0.5) 1px, transparent 1px);
+        background-size: 22px 22px;
+    }
+    .ls-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+    .ls-scroll::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 99px; }
+}
+
+@keyframes ls-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.ls-rise { animation: ls-rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+    .ls-rise, .ls-lift { animation: none; transition: none; }
+}
+
+@layer base {
+    [data-debug-wrapper="true"] { display: contents !important; }
+}

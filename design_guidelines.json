@@ -1,0 +1,183 @@
+{
+  "project_info": {
+    "name": "LEAMSE",
+    "domain": "leamse.com",
+    "description": "Infraestrutura completa de pagamentos e comércio (Financial & Commerce Infrastructure), concorrente direta de Stripe e Resend. Provedor próprio sem intermediação de terceiros.",
+    "primary_language": "pt-BR (Português)",
+    "app_type": "hybrid_fullstack (SaaS Dashboard + Marketing Landing Page)"
+  },
+  "color_palette": {
+    "primary_brand": {
+      "orange_main": "#F97316",
+      "orange_hover": "#EA580C",
+      "orange_light": "#FFF7ED",
+      "orange_border": "#FDBA74",
+      "orange_glow": "rgba(249, 115, 22, 0.25)"
+    },
+    "neutrals": {
+      "white_pure": "#FFFFFF",
+      "bg_light": "#FAFAFA",
+      "surface_light": "#F4F4F5",
+      "border_light": "#E4E4E7",
+      "text_dark": "#09090B",
+      "text_muted": "#71717A",
+      "dark_bg": "#09090B",
+      "dark_surface": "#18181B",
+      "dark_border": "#27272A",
+      "dark_text": "#F4F4F5"
+    },
+    "css_variables_theme": {
+      "light": {
+        "--background": "0 0% 100%",
+        "--foreground": "240 10% 3.9%",
+        "--card": "0 0% 100%",
+        "--card-foreground": "240 10% 3.9%",
+        "--popover": "0 0% 100%",
+        "--popover-foreground": "240 10% 3.9%",
+        "--primary": "24.6 95% 53.1%",
+        "--primary-foreground": "0 0% 100%",
+        "--secondary": "240 4.8% 95.9%",
+        "--secondary-foreground": "240 5.9% 10%",
+        "--muted": "240 4.8% 95.9%",
+        "--muted-foreground": "240 3.8% 46.1%",
+        "--accent": "24.6 95% 96.1%",
+        "--accent-foreground": "24.6 95% 43.1%",
+        "--destructive": "0 84.2% 60.2%",
+        "--destructive-foreground": "0 0% 98%",
+        "--success": "142.1 76.2% 36.3%",
+        "--warning": "38 92% 50%",
+        "--border": "240 5.9% 90%",
+        "--input": "240 5.9% 90%",
+        "--ring": "24.6 95% 53.1%",
+        "--surface": "240 4.8% 98%",
+        "--radius": "0.75rem"
+      },
+      "dark": {
+        "--background": "240 10% 3.9%",
+        "--foreground": "0 0% 98%",
+        "--card": "240 5.9% 10%",
+        "--card-foreground": "0 0% 98%",
+        "--popover": "240 5.9% 10%",
+        "--popover-foreground": "0 0% 98%",
+        "--primary": "24.6 95% 53.1%",
+        "--primary-foreground": "0 0% 100%",
+        "--secondary": "240 3.7% 15.9%",
+        "--secondary-foreground": "0 0% 98%",
+        "--muted": "240 3.7% 15.9%",
+        "--muted-foreground": "240 5% 64.9%",
+        "--accent": "240 3.7% 15.9%",
+        "--accent-foreground": "24.6 95% 63.1%",
+        "--destructive": "0 62.8% 30.6%",
+        "--destructive-foreground": "0 0% 98%",
+        "--success": "142.1 70.6% 45.3%",
+        "--warning": "38 92% 50%",
+        "--border": "240 3.7% 15.9%",
+        "--input": "240 3.7% 15.9%",
+        "--ring": "24.6 95% 53.1%",
+        "--surface": "240 5.9% 10%"
+      }
+    },
+    "per_service_identity": {
+      "payments": {
+        "name": "LEAMSE Payments",
+        "tagline": "Meio de pagamento próprio, checkout de alta conversão, ledger e carteira digital.",
+        "badge_color": "bg-orange-500/10 text-orange-600 border-orange-500/20",
+        "accent": "#F97316",
+        "vibe": "Electric Orange & High-Precision Financial Ledger"
+      },
+      "marketplace": {
+        "name": "LEAMSE Marketplace API",
+        "tagline": "Gestão de pedidos, vendedores, comissionamento e catálogo multi-seller.",
+        "badge_color": "bg-amber-500/10 text-amber-600 border-amber-500/20",
+        "accent": "#F59E0B",
+        "vibe": "Warm Amber & E-Commerce Infrastructure"
+      },
+      "email": {
+        "name": "LEAMSE Email API",
+        "tagline": "Disparo transacional ultrarrápido estilo Resend com entregabilidade garantida.",
+        "badge_color": "bg-red-500/10 text-red-500 border-red-500/20",
+        "accent": "#EF4444",
+        "vibe": "Hot Ember & Developer-first Code Logs"
+      },
+      "automação": {
+        "name": "LEAMSE Automação (Agenda, CRM, Assistente WA & Fluxos)",
+        "tagline": "Agendamentos automáticos, CRM kanban visual, IA no WhatsApp 24/7 e réguas de automação.",
+        "badge_color": "bg-orange-600/10 text-orange-700 border-orange-600/20",
+        "accent": "#EA580C",
+        "vibe": "Tangerine Flow & Kinetic Automation"
+      },
+      "link_na_bio": {
+        "name": "Link na Bio",
+        "tagline": "Sua vitrine digital pública para apresentar negócios, agendar e vender em segundos.",
+        "badge_color": "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900",
+        "accent": "#18181B",
+        "vibe": "Minimalist Bio Storefront (Sempre visível em todos os dashboards)"
+      }
+    }
+  },
+  "typography": {
+    "font_families": {
+      "display": "Manrope, system-ui, sans-serif",
+      "sans": "IBM Plex Sans, system-ui, sans-serif",
+      "mono": "IBM Plex Mono, monospace"
+    },
+    "hierarchy_rules": {
+      "h1_hero": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight",
+      "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight",
+      "h3_subsection": "text-xl sm:text-2xl font-semibold tracking-tight",
+      "h4_card": "text-lg sm:text-xl font-semibold",
+      "body": "text-base leading-relaxed text-muted-foreground",
+      "small_label": "text-xs font-medium uppercase tracking-widest text-orange-600"
+    }
+  },
+  "layout_and_navigation": {
+    "header": {
+      "style": "backdrop-blur-xl bg-white/80 dark:bg-zinc-950/80 border-b border-border/80 sticky top-0 z-50",
+      "components": ["Logo LEAMSE com indicador de status de produção", "Service Switcher Dropdown (Mudar de serviço)", "Acesso rápido ao Link na Bio", "Chaves de API & Docs", "Notificações & Perfil"]
+    },
+    "service_switcher": {
+      "description": "Dropdown proeminente no topo e na sidebar permitindo alternar instantaneamente entre LEAMSE Payments, Marketplace, Email API, Automação e Link na Bio. Cada serviço possui seu ambiente limpo e isolado.",
+      "persistent_element": "O Link na Bio é visível e acessível em 1 clique em TODOS os dashboards de todos os usuários."
+    },
+    "sidebar": {
+      "style": "w-64 border-r border-border bg-card p-4 flex flex-col justify-between hidden md:flex min-h-screen",
+      "item_active": "bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold border-l-2 border-orange-500"
+    }
+  },
+  "surfaces_and_effects": {
+    "ls_card": "rounded-2xl border border-border bg-card shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 hover:shadow-[0_8px_30px_rgba(249,115,22,0.08)] transition-all duration-200",
+    "ls_surface": "bg-muted/40 rounded-xl p-4 border border-border/50",
+    "ls_grain": "relative overflow-hidden before:absolute before:inset-0 before:pointer-events-none before:opacity-20 before:bg-[radial-gradient(#f97316_1px,transparent_1px)] before:[background-size:16px_16px]",
+    "tracing_beam": "border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
+  },
+  "image_urls": {
+    "fintech_checkout": "https://images.unsplash.com/photo-1757301714935-c8127a21abc6?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "pos_terminal_card": "https://images.unsplash.com/photo-1628527304948-06157ee3c8a6?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "mobile_dashboard": "https://images.unsplash.com/photo-1627719172031-ab42dc849bc3?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "avatar_founder_male": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "avatar_founder_female": "https://images.unsplash.com/photo-1607746882042-944635dfe10e?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "product_mockup": "https://images.unsplash.com/photo-1706509511714-2a1e0f74321e?crop=entropy&cs=srgb&fm=jpg&q=85"
+  },
+  "testing_guidelines": {
+    "data_testid_rule": "Todos os elementos interativos, botões, inputs, abas, links e seletores de serviço OBRIGATORIAMENTE devem possuir data-testid em kebab-case.",
+    "examples": [
+      "data-testid=\"service-switcher-trigger\"",
+      "data-testid=\"service-option-payments\"",
+      "data-testid=\"service-option-marketplace\"",
+      "data-testid=\"service-option-email\"",
+      "data-testid=\"service-option-automacao\"",
+      "data-testid=\"service-option-link-bio\"",
+      "data-testid=\"create-api-key-button\"",
+      "data-testid=\"crm-kanban-column-leads\"",
+      "data-testid=\"whatsapp-ai-chat-input\""
+    ]
+  },
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Respeite estritamente a paleta Laranja & Branco (#F97316 principal, branco puro, fundos limpos e contraste grafite no escuro).",
+    "Ganta que os dashboards dos serviços JAMAIS fiquem misturados. O usuário alterna entre eles via Service Switcher.",
+    "O Link na Bio DEVE aparecer em todos os dashboards e possuir seu builder visual em tempo real + página pública simulada.",
+    "Linguagem padrão em Português (pt-BR) com termos de negócios e infraestrutura financeira impecáveis.",
+    "Sempre incluir atributos data-testid em todos os componentes interativos.",
+    "Utilizar ícones da biblioteca lucide-react ou @phosphor-icons/react."
+  ]
+}
